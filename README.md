@@ -1,1 +1,1 @@
-# SFM
+# Basic Structure from Motion
