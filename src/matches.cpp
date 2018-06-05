@@ -3,8 +3,10 @@
 // Author: Zeyu Zhong
 // Date: 2018.5.7
 
-#include "matches.h"
+#include "../src/matches.h"
 #include <opencv2/video/tracking.hpp>
+
+using cv::TermCriteria;
 
 // Write function to obtain KLT features correspondances between images
 void matches::detectfeature() {
@@ -22,7 +24,7 @@ void matches::detectfeature() {
 void matches::matchFeatures() {
     vector<uchar> status;
     vector<float> err;
-    Size winsize = Size(31, 31);
+    cv::Size winsize = cv::Size(31, 31);
     int maxlevel = 3;
     TermCriteria criteria = TermCriteria(TermCriteria::COUNT+TermCriteria::EPS, 30, 0.01);
     double derivlambda = 0.5;
@@ -42,8 +44,8 @@ void matches::filterFeatures() {
     // std::cout << "pre erase size = " << i1_features.size() COS i2_features.size() << std::endl;
 
     while (it1 != i1_features.end()) {
-        Point2f tpt1 = *it1;
-        Point2f tpt2 = *it2;
+        cv::Point2f tpt1 = *it1;
+        cv::Point2f tpt2 = *it2;
         double dist  = sqrt((tpt1.x - tpt2.x)*(tpt1.x - tpt2.x) + (tpt1.y - tpt2.y)*(tpt1.y - tpt2.y));
         if (dist < 2.5) {
           i1_features.erase(it1);
@@ -61,15 +63,15 @@ Mat matches::drawCorrespondances() {
     Mat src_copy;
     i2.copyTo(src_copy);
 
-    std::vector<Point2f> :: const_iterator itc = i1_features.begin();
-    std::vector<Point2f> :: const_iterator itf = i2_features.begin();
+    std::vector<cv::Point2f> :: const_iterator itc = i1_features.begin();
+    std::vector<cv::Point2f> :: const_iterator itf = i2_features.begin();
 
     int count = 0;
 
     while (itc != i1_features.end()) {
-        circle(src_copy, *itc, 1, Scalar(0, 0, 255), 2, 8, 0);
-        circle(src_copy, *itf, 1, Scalar(255, 0, 0), 2, 8, 0);
-        cv::line(src_copy, *itc, *itf, Scalar(0, 255, 0) );
+        circle(src_copy, *itc, 1, cv::Scalar(0, 0, 255), 2, 8, 0);
+        circle(src_copy, *itf, 1, cv::Scalar(255, 0, 0), 2, 8, 0);
+        cv::line(src_copy, *itc, *itf, cv::Scalar(0, 255, 0) );
         itc++;
         itf++;
         count++;

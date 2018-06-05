@@ -11,7 +11,7 @@
 #include <opencv/cv.h>
 #include <opencv2/highgui/highgui.hpp>
 
-using namespace cv;
+using cv::Mat;
 using std::vector;
 
 class matches {
@@ -20,8 +20,8 @@ class matches {
     Mat drawCorrespondances();
     Mat i1, i2;
     Mat denseflow;
-    vector<Point2f> i1_features;
-    vector<Point2f> i2_features;
+    vector<cv::Point2f> i1_features;
+    vector<cv::Point2f> i2_features;
     vector<Mat> i1_colors;
 
  private:

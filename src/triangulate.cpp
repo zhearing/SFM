@@ -3,13 +3,13 @@
 // Author: Zeyu Zhong
 // Date: 2018.5.7
 
-#include "triangulate.h"
+#include "../src/triangulate.h"
 
-Mat triangulate :: triangulate_points(vector<Point2f> f1, vector<Point2f> f2, float scale, Mat P2, Mat P1) {
+Mat triangulate :: triangulate_points(vector<cv::Point2f> f1, vector<cv::Point2f> f2, float scale, Mat P2, Mat P1) {
   // cout<<"P1 = "<<P1<<endl;
   // cout<<"P2 = "<<P2<<endl;
-    Mat J(4, 4, CV_32F, Scalar(0));
-    Mat X(f1.size(), 4, CV_32F, Scalar(0));
+    Mat J(4, 4, CV_32F, cv::Scalar(0));
+    Mat X(f1.size(), 4, CV_32F, cv::Scalar(0));
 
     for (int i = 0; i < f1.size(); i++) {
         float x1 = f1[i].x/scale; float y1 = f1[i].y/scale;
@@ -22,7 +22,7 @@ Mat triangulate :: triangulate_points(vector<Point2f> f1, vector<Point2f> f2, fl
 
         // Finding the solution with minimum error
 
-        SVD svd(J);
+        cv::SVD svd(J);
 
         Mat V = svd.vt.t();
         Mat t = V.col(3);

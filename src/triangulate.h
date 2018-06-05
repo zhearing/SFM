@@ -12,11 +12,11 @@
 #include <opencv2/highgui/highgui.hpp>
 
 using std::vector;
-using namespace cv;
+using cv::Mat;
 
 class triangulate {
  public:
-    Mat triangulate_points(vector<Point2f>, vector<Point2f>, float, Mat, Mat);
+    Mat triangulate_points(vector<cv::Point2f>, vector<cv::Point2f>, float, Mat, Mat);
 };
 
 #endif  // SRC_TRIANGULATE_H_

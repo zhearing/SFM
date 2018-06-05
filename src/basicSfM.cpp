@@ -3,11 +3,12 @@
 // Author: Zeyu Zhong
 // Date: 2018.5.7
 
-#include "basicSfM.h"
+#include "../src/basicSfM.h"
 #include <iterator>
-#include "matches.h"
-#include "essential.h"
-#include "triangulate.h"
+#include <string>
+#include "../src/matches.h"
+#include "../src/essential.h"
+#include "../src/triangulate.h"
 
 void basicSfM :: reconstruct_sparse3d(vector<Mat> images) {
 //    std::cout<<"Step1. Compute correspondance match between images "<<std::endl;
@@ -17,7 +18,7 @@ void basicSfM :: reconstruct_sparse3d(vector<Mat> images) {
     Mat image2 = images[1];
 
     Mt.computeCorrespondances(image1, image2, false);
-    vector<Point2f> iF1 = Mt.i1_features;
+    vector<cv::Point2f> iF1 = Mt.i1_features;
 
     for (int i = 2; i < images.size(); i++) {
         images[i].copyTo(image2);
@@ -25,11 +26,11 @@ void basicSfM :: reconstruct_sparse3d(vector<Mat> images) {
         Mt.computeCorrespondances(image1, image2, true);
     }
 
-    vector<Point2f> iF2 = Mt.i2_features;
+    vector<cv::Point2f> iF2 = Mt.i2_features;
     Mat tracks = Mt.drawCorrespondances();
 
     imshow("tracks", tracks);
-    waitKey(0);
+    cv::waitKey(0);
 
 //    std::cout<<"Step2. Compute  Essential Matrix "<<std::endl;
 
@@ -67,7 +68,7 @@ void basicSfM :: algorithm_sparse3d() {
         std::stringstream ss;
         ss << i;
         std::string iPath = "../../images/" + ss.str() + ".pgm";
-        Mat image = imread(iPath, 1);
+        Mat image = cv::imread(iPath, 1);
         images.push_back(image);
     }
     reconstruct_sparse3d(images);

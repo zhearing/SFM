@@ -3,10 +3,13 @@
 // Author: Zeyu Zhong
 // Date: 2018.5.7
 
-#include "essential.h"
+#include "../src/essential.h"
+#include <string>
 #include <opencv2/calib3d/calib3d.hpp>
 
-#define THR_D 40
+using cv::FileStorage;
+
+const int THR_D = 40;
 
 void essential :: getIntrinsic() {
     std::string filename = "../../src/Camera/Kseq8.xml";
@@ -21,8 +24,8 @@ void essential :: getIntrinsic() {
 //    std::cout<<K<<std::endl;
 }
 
-void essential :: computeEssentialMat(vector<Point2f> iF1, vector<Point2f> iF2) {
-    F = findFundamentalMat(iF1, iF2, FM_RANSAC, 1.3, 0.99);
+void essential :: computeEssentialMat(vector<cv::Point2f> iF1, vector<cv::Point2f> iF2) {
+    F = findFundamentalMat(iF1, iF2, cv::FM_RANSAC, 1.3, 0.99);
 //    std::cout<<" Fundamental Matrix " << F <<std::endl;
 
     // Computing the Essential matrix
@@ -31,10 +34,10 @@ void essential :: computeEssentialMat(vector<Point2f> iF1, vector<Point2f> iF2) 
 }
 
 void essential :: computePose() {
-    SVD svd(E);
+    cv::SVD svd(E);
 
-    Mat W = (Mat_<double>(3, 3) << 0, -1, 0, 1, 0, 0, 0, 0, 1);
-    Mat Z = (Mat_<double>(3, 3) << 0, 1, 0, -1, 0, 0, 0, 0, 0);
+    Mat W = (cv::Mat_<double>(3, 3) << 0, -1, 0, 1, 0, 0, 0, 0, 1);
+    Mat Z = (cv::Mat_<double>(3, 3) << 0, 1, 0, -1, 0, 0, 0, 0, 0);
 
     //  Two possible rotation matrix
 
@@ -53,21 +56,21 @@ void essential :: computePose() {
         R2 = -R2;
 
     P0 = cv::Mat::eye(3, 4, CV_64FC1);
-    P1 = cv::Mat(3, 4, CV_64FC1, Scalar(0)); P2 = cv::Mat(3, 4, CV_64FC1, Scalar(0));
-    P3 = cv::Mat(3, 4, CV_64FC1, Scalar(0)); P4 = cv::Mat(3, 4, CV_64FC1, Scalar(0));
+    P1 = cv::Mat(3, 4, CV_64FC1, cv::Scalar(0)); P2 = cv::Mat(3, 4, CV_64FC1, cv::Scalar(0));
+    P3 = cv::Mat(3, 4, CV_64FC1, cv::Scalar(0)); P4 = cv::Mat(3, 4, CV_64FC1, cv::Scalar(0));
 
     // R1 with t1, R1 with t2, R2 with t1, R2 with t2;
-    R1.copyTo( P1( Range(0, 3), Range(0, 3) ) ); t1.copyTo(P1.col(3));
-    R1.copyTo( P2( Range(0, 3), Range(0, 3) ) ); t2.copyTo(P2.col(3));
+    R1.copyTo( P1( cv::Range(0, 3), cv::Range(0, 3) ) ); t1.copyTo(P1.col(3));
+    R1.copyTo( P2( cv::Range(0, 3), cv::Range(0, 3) ) ); t2.copyTo(P2.col(3));
 
-    R2.copyTo( P3( Range(0, 3), Range(0, 3) ) ); t1.copyTo(P3.col(3));
-    R2.copyTo( P4( Range(0, 3), Range(0, 3) ) ); t2.copyTo(P4.col(3));
+    R2.copyTo( P3( cv::Range(0, 3), cv::Range(0, 3) ) ); t1.copyTo(P3.col(3));
+    R2.copyTo( P4( cv::Range(0, 3), cv::Range(0, 3) ) ); t2.copyTo(P4.col(3));
 
     P0 = K*P0; P1 = K*P1; P2 = K*P2; P3 = K*P3; P4 = K*P4;
 }
 
 Mat essential :: sign(Mat A) {
-    Mat S(1, A.cols, CV_64FC1, Scalar(0));
+    Mat S(1, A.cols, CV_64FC1, cv::Scalar(0));
 
     for (int i = 0; i < A.cols; i++) {
         double x = A.at<double>(0, i);
@@ -90,7 +93,7 @@ void essential :: get_valid_3d(Mat P, Mat chiral, Mat X, Mat R, Mat t) {
 
             // filtering only the points which are not too far from camera
             if (z > 0 && z < THR_D) {
-                Point3f pt;
+                cv::Point3f pt;
                 pt.x = x; pt.y = y; pt.z = z;
                 xReconstructed.push_back(pt);
             }
@@ -100,8 +103,7 @@ void essential :: get_valid_3d(Mat P, Mat chiral, Mat X, Mat R, Mat t) {
 
 
 
-void essential :: check_chirality(Mat Xn1, Mat Xn2, Mat Xn3, Mat Xn4)
-{
+void essential :: check_chirality(Mat Xn1, Mat Xn2, Mat Xn3, Mat Xn4) {
     Xn1.convertTo(Xn1, CV_64F); Xn2.convertTo(Xn2, CV_64F);  Xn3.convertTo(Xn3, CV_64F);  Xn4.convertTo(Xn4, CV_64F);
 
     // Projecting to the first camera K[I|0]
@@ -119,13 +121,13 @@ void essential :: check_chirality(Mat Xn1, Mat Xn2, Mat Xn3, Mat Xn4)
     Mat chiral4 = sign( ax4.row(2) ).mul( sign( Xn4.t().row(3) ) ) + sign( bx4.row(2) ).mul( sign( Xn4.t().row(3) ) );
 
     Mat chiral_sum(1, 4, CV_64F);
-    Scalar sc1 = sum(chiral1); Scalar sc2 = sum(chiral2); Scalar sc3 = sum(chiral3); Scalar sc4 = sum(chiral4);
+    cv::Scalar sc1 = sum(chiral1); cv::Scalar sc2 = sum(chiral2); cv::Scalar sc3 = sum(chiral3); cv::Scalar sc4 = sum(chiral4);
     chiral_sum.at<double>(0, 0) = static_cast<double>(sc1(0));
     chiral_sum.at<double>(0, 1) = static_cast<double>(sc2(0));
     chiral_sum.at<double>(0, 2) = static_cast<double>(sc3(0));
     chiral_sum.at<double>(0, 3) = static_cast<double>(sc4(0));
 
-    double mx, mn; Point minLoc, maxLoc;
+    double mx, mn; cv::Point minLoc, maxLoc;
     minMaxLoc(chiral_sum, &mn, &mx, &minLoc, &maxLoc);
 
     switch (maxLoc.x) {
