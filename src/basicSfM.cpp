@@ -29,7 +29,8 @@ void basicSfM :: reconstruct_sparse3d(vector<Mat> images) {
     vector<cv::Point2f> iF2 = Mt.i2_features;
     Mat tracks = Mt.drawCorrespondances();
 
-    imshow("tracks", tracks);
+    cv::imshow("tracks", tracks);
+    cv::imwrite("tracks.jpg", tracks);
     cv::waitKey(0);
 
 //    std::cout<<"Step2. Compute  Essential Matrix "<<std::endl;
