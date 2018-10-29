@@ -16,7 +16,7 @@ using cv::Mat;
 
 class triangulate {
  public:
-    Mat triangulate_points(vector<cv::Point2f>, vector<cv::Point2f>, float, Mat, Mat);
+    Mat triangulate_points(vector <cv::Point2f>, vector <cv::Point2f>, float, Mat, Mat);
 };
 
 #endif  // SRC_TRIANGULATE_H_

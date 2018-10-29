@@ -17,19 +17,26 @@ using std::vector;
 class matches {
  public:
     void computeCorrespondances(Mat, Mat, bool);
+
     Mat drawCorrespondances();
+
     Mat i1, i2;
     Mat denseflow;
-    vector<cv::Point2f> i1_features;
-    vector<cv::Point2f> i2_features;
-    vector<Mat> i1_colors;
+    vector <cv::Point2f> i1_features;
+    vector <cv::Point2f> i2_features;
+    vector <Mat> i1_colors;
 
  private:
     void detectfeature();
+
     void matchFeatures();
+
     void filterFeatures();
-    double qualityLevel; double minDistance;
-    int blockSize; bool useHarrisDetector;
+
+    double qualityLevel;
+    double minDistance;
+    int blockSize;
+    bool useHarrisDetector;
     double k;
     int maxCorners;
 };

@@ -19,8 +19,9 @@ class basicSfM {
     void algorithm_sparse3d();
 
  private:
-    void reconstruct_sparse3d(vector<Mat>);
-    vector<cv::Point3d> xR;
+    void reconstruct_sparse3d(vector <Mat>);
+
+    vector <cv::Point3d> xR;
     Mat iP1, iP2;
 };
 

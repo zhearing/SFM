@@ -10,7 +10,7 @@
 #include "../src/essential.h"
 #include "../src/triangulate.h"
 
-void basicSfM :: reconstruct_sparse3d(vector<Mat> images) {
+void basicSfM::reconstruct_sparse3d(vector <Mat> images) {
 //    std::cout<<"Step1. Compute correspondance match between images "<<std::endl;
     matches Mt;
 
@@ -18,7 +18,7 @@ void basicSfM :: reconstruct_sparse3d(vector<Mat> images) {
     Mat image2 = images[1];
 
     Mt.computeCorrespondances(image1, image2, false);
-    vector<cv::Point2f> iF1 = Mt.i1_features;
+    vector <cv::Point2f> iF1 = Mt.i1_features;
 
     for (int i = 2; i < images.size(); i++) {
         images[i].copyTo(image2);
@@ -26,7 +26,7 @@ void basicSfM :: reconstruct_sparse3d(vector<Mat> images) {
         Mt.computeCorrespondances(image1, image2, true);
     }
 
-    vector<cv::Point2f> iF2 = Mt.i2_features;
+    vector <cv::Point2f> iF2 = Mt.i2_features;
     Mat tracks = Mt.drawCorrespondances();
 
     cv::imshow("tracks", tracks);
@@ -44,7 +44,8 @@ void basicSfM :: reconstruct_sparse3d(vector<Mat> images) {
     Est.computePose();
 
 //    std::cout<<"Step4. Reconstruct for possible Rt matices using Triangulation" <<std::endl;
-    triangulate tr; float scale = 1.0;
+    triangulate tr;
+    float scale = 1.0;
 
     Mat Xn1 = tr.triangulate_points(iF1, iF2, scale, Est.P0, Est.P1);
     Mat Xn2 = tr.triangulate_points(iF1, iF2, scale, Est.P0, Est.P2);
@@ -53,8 +54,8 @@ void basicSfM :: reconstruct_sparse3d(vector<Mat> images) {
 
 //    std::cout<<"Step5. Check the chirality to validate the reconstruction"<<std::endl;
     Est.check_chirality(Xn1, Xn2, Xn3, Xn4);
-    vector<cv::Point3d> xR = Est.xReconstructed;
-    vector<cv::Point3d> :: iterator it = xR.begin();
+    vector <cv::Point3d> xR = Est.xReconstructed;
+    vector<cv::Point3d>::iterator it = xR.begin();
 
     while (it != xR.end()) {
         std::cout << it->x << " " << it->y << " " << it->z << std::endl;
@@ -63,8 +64,8 @@ void basicSfM :: reconstruct_sparse3d(vector<Mat> images) {
     (Est.P2c).copyTo(iP1);
 }
 
-void basicSfM :: algorithm_sparse3d() {
-    vector<Mat> images;
+void basicSfM::algorithm_sparse3d() {
+    vector <Mat> images;
     for (int i = 15; i <= 19; i++) {
         std::stringstream ss;
         ss << i;
